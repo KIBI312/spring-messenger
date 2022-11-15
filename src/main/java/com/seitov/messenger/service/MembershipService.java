@@ -47,7 +47,7 @@ public class MembershipService {
     public void delete(Channel channel, User user) throws ResourceNotFoundException {
         long res = membershipRepository.deleteByUserAndChannel(user, channel);
         if(res==0){
-            throw new ResourceNotFoundException("User not present on this server!");
+            throw new ResourceNotFoundException("Member not found on this channel!");
         }
     }
 
