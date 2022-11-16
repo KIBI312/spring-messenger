@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+      <title th:text="${channel.name}"></title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <link rel="stylesheet" href="/css/bootstrap.css" th:href="@{/css/bootstrap.css}" />
+      <link rel="stylesheet" href="/css/main.css" th:href="@{/css/main.css}" />
+      <script src="/js/channel.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    </head>
+  <body class="bg-image">
+    <div class="visually-hidden" th:id="channelId" th:value="${channel.id}"></div>
+    <div class="container-fluid h-100">
+      <div class="row h-100">
+        <!-- Rooms section -->
+        <div class="col-md-2 d-flex flex-column h-100 p-0 bg-dark text-light">
+          <a class="btn btn-lg btn-dark text-start" href="/dashboard/0">Dashboard</a>
+          <a class="btn btn-lg btn-dark text-start" th:href="@{/channel/{channelId}/0(channelId=${channel.id})}">News</a>
+          <button class="btn btn-lg btn-dark text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRooms" aria-expanded="false" aria-controls="collapseRooms">Rooms</button>
+          <div class="collapse overflow-scroll" id="collapseRooms">
+              <div class="pb-3 overflow-scroll">
+                  <div class="h-100 overflow-scroll">
+                      <div class="px-0 mx-0" th:each="room: ${rooms}" >
+                          <div class="px-0 py-2">
+                            <a class="btn btn-dark w-100" th:href="@{/channel/{channelId}/room/{roomName}/0(channelId=${channel.id}, roomName=${room.name})}" th:text="${room.name}"></a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="mt-auto text-center" th:if="${permissions>=2}">
+                <button type="button" class="btn btn-outline-info btn-md mb-2" data-bs-toggle="modal" data-bs-target="#createRoomModal">Create new room</button>
+              </div>
+          </div>
+          <!-- Create room modal -->
+          <div class="modal fade" id="createRoomModal" tabindex="-1" aria-labelledby="createRoomModalTitle" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title text-dark" id="createRoomModalTitle">New Room</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="createRoom" method="post">
+                  <div class="modal-body">
+                    <div class="form-light text-center">
+                      <label for="name" class="visually-hidden"></label>
+                      <input class="form-control mb-1" type="text" name="name" placeholder="name" maxlength="80" required>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="submit">Create</button> 
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <!-- Create room modal end -->
+          <a class="btn btn-lg btn-dark text-start" th:if="${permissions>=2}" th:href="@{/channel/{channelId}/settings(channelId=${channel.id})}">Settings</a>
+          <div class="mt-auto" th:if="${permissions!=-1 and permissions!=3}">
+            <form id="leaveChannel">
+              <div class="form-light px-1 text-center">
+                <button class="btn btn-outline-info btn-md mb-2" type="submit">Leave</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- Articles section -->
+        <div class="col-md-8 h-100 overflow-scroll">
+          <div class="row">
+            <h3 class="col-9 text-start m-3">Latest</h3>
+            <div class="col-2 m-3" th:if="${permissions>=2}">
+              <button type="button" class="btn btn-outline-dark btn-md mb-2" data-bs-toggle="modal" data-bs-target="#createArticleModal"> New Article</button>
+            </div>
+          </div>
+          <!-- Create article modal window -->
+          <div class="modal fade" id="createArticleModal" tabindex="-1" aria-labelledby="createArticleModalTitle" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title text-dark" id="createArticleModalTitle">New Article</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="createArticle" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="form-light text-center">
+                            <label for="title" class="visually-hidden"></label>
+                            <input class="form-control mb-1" type="text" name="title" placeholder="title" maxlength="80" required>
+                        </div>
+                        <div class="form-light text-center">
+                            <label for="text" class="visually-hidden"></label>
+                            <textarea class="form-control mb-1" type="text" name="text" rows="10" maxlength="10000" placeholder="text"></textarea>
+                        </div>
+                        <div>
+                            <label for="image" class="form-label text-dark">Attach picture(.png)</label>
+                            <input class="form-control" type="file" name="image" accept="image/png, image/jpg, image/jpeg">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-primary" type="submit">Create</button> 
+                    </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="card bg-secondary bg-opacity-75 text-dark mb-2 mx-5" th:each="article: ${articles}">
+            <div class="card-body">
+              <h5 class="px-4 card-title" th:text="${article.title}"></h5>      
+              <p class="card-text" th:text="${article.text}"></p> 
+              <div th:if="${article.articleImage != null}" class="text-center">
+                <img class="card-img-top w-50 h-50 articlePic" th:src="@{/image/{imageId}/(imageId=${article.articleImage.id})}" alt="article pictire">
+              </div>
+            </div>
+          </div>
+          <!-- Articles pagination -->
+          <div class="row">
+            <div class="col-2 offset-1">
+              <a th:if="${page>0}" class="btn btn-dark border border-primary w-100 my-3 float-start" th:href="@{/channel/{channelId}/{page}(channelId=${channel.id}, page=${page-1})}">Previous</a>
+            </div>
+            <div class="col-2 offset-2">
+              <a th:if="${page>0}" class="btn btn-dark border border-primary w-100 my-3" th:href="@{/channel/{channelId}/{page}(channelId=${channel.id}, page=0)}">To start</a>
+            </div>
+            <div class="col-2 offset-2">
+              <a th:if="${#lists.size(articles)==10}" class="btn btn-dark border border-primary w-100 my-3 float-end" th:href="@{/channel/{channelId}/{page}(channelId=${channel.id}, page=${page+1})}">Next</a>
+            </div>
+          </div>
+        </div>
+        <!-- Members section -->
+        <div class="col-md-2 d-flex flex-column h-100 p-0 bg-dark text-light">
+          <div class="list-group pb-3 overflow-scroll">
+            <h4 class="text-center">Members</h4>
+            <div class="h-100 overflow-scroll">
+              <div th:if="${permissions>=1}">
+                <div class="row m-0" th:each="member: ${members}">
+                  <div class="col-2 ps-2 pe-0 py-2">
+                    <img class="border border-light img-fluid rounded-circle profilePicTiny" th:src="${member.profilePic}?@{/image/{imageId}/(imageId=${member.profilePic.id})}:@{/default/profilePic.png}" alt="profile pictire">
+                  </div>
+                  <div class="col-8 px-0 py-1">
+                      <li class="btn btn-dark w-100" th:text="${member.username}"></li>
+                  </div>
+                  <div class="col-2 px-0 py-1">
+                      <button type="button" th:id="${member.username}" class="btn btn-dark px-2 text-center removeMember"><img src="/css/remove.svg" class="addButton"></button>
+                  </div>
+                </div>
+              </div>
+              <div th:if="${permissions<1}">
+                <div class="list-group pb-3 overflow-scroll">
+                  <div class="row px-0 mx-0" th:each="member: ${members}">
+                    <div class="col-2 ps-2 pe-0 py-2">
+                      <img class="border border-light img-fluid rounded-circle profilePicTiny" th:src="${member.profilePic}?@{/image/{imageId}/(imageId=${member.profilePic.id})}:@{/default/profilePic.png}" alt="profile pictire">
+                    </div>
+                    <div class="col-10 px-0 py-1">
+                      <a class="btn btn-dark w-100" th:text="${member.username}"></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>  
+          </div>
+          <div class="mt-auto" th:if="${permissions>=1}">
+            <form id="addMember">
+                <div class="form-light px-1 text-center">
+                    <label for="username" class="visually-hidden"></label>
+                    <input class="form-control mb-1" type="text" name="username" placeholder="username" maxlength="80" required>
+                    <button class="btn btn-outline-info btn-md mb-2" type="submit">Add member</button>
+                </div>
+            </form>
+          </div>
+          <div class="mt-auto" th:if="${permissions==-1}">
+            <form id="joinChannel">
+              <div class="form-light px-1 text-center">
+                <button class="btn btn-outline-info btn-md mb-2" type="submit">Join!</button>
+              </div>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

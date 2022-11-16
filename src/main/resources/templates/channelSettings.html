@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+      <title th:text="${channel.name}"></title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <link rel="stylesheet" href="/css/bootstrap.css" th:href="@{/css/bootstrap.css}" />
+      <link rel="stylesheet" href="/css/main.css" th:href="@{/css/main.css}" />
+      <script src="/js/channelSettings.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    </head>
+  <body class="bg-image">
+    <div class="visually-hidden" th:id="channelId" th:value="${channel.id}"></div>
+    <div class="container-fluid h-100">
+      <div class="row h-100">
+        <!-- Left sidebar -->
+        <div class="col-md-2 d-flex flex-column h-100 p-0 bg-dark text-light">
+          <a class="btn btn-lg btn-dark text-start" th:href="@{/channel/{channelId}/0(channelId=${channel.id})}">Back to channel</a>
+          <a class="btn btn-lg btn-dark text-start" href="/dashboard/0">Dashboard</a>
+        </div>
+        <!-- Left sidebar end -->
+        <!-- Main section -->
+        <div class="col-md-8 ps-4 py-3">
+          <h2>Manage channel</h2>
+          <div class="row">
+            <!-- Update channel picture -->
+            <div class="col-3 ps-3 text-center">
+              <img class="border border-light img-fluid rounded-circle profilePicLarge" th:src="${channel.profilePic}?@{/image/{imageId}/(imageId=${channel.profilePic.id})}:@{/default/profilePic.png}" alt="profile pictire">
+              <form id="updateProfilePic" method="patch" enctype="multipart/form-data">
+                <input class="form-control visually-hidden" type="text" name="channelId"  th:value="${channel.id}" required>
+                <label for="image" class="form-label ps-1 text-dark">Update profile picture</label>
+                <input class="form-control mb-2" type="file" name="image" accept="image/png, image/jpg, image/jpeg" required>
+                <button class="btn btn-primary w-100" type="submit">Update</button> 
+              </form>
+            </div>
+            <!-- Update channel info -->
+            <div class="col-9">
+              <form id="updateChannel" method="patch" enctype="multipart/form-data">
+                <input class="form-control visually-hidden" type="text" name="id"  th:value="${channel.id}" required>
+                <div class="form-light">
+                  <label for="name">Channel name</label>
+                  <input class="form-control mb-1" type="text" name="name"  th:placeholder="${channel.name}" th:value="${channel.name}" maxlength="80" required>
+                </div>
+                <div class="form-light">
+                  <label for="description">Description</label>
+                  <textarea class="form-control mb-1" type="text" name="description" th:placeholder="${channel.description}" th:text="${channel.description}" rows="3" maxlength="150"></textarea>
+                </div>
+                <div class="row ps-3 py-2">
+                  <div class="col-3 form-check">
+                    <input class="form-check-input" type="radio" name="accessType" id="open" value="open" checked>
+                    <label class="form-check-label text-dark" for="open">Public</label>
+                  </div>
+                  <div class="col-3 form-check">
+                    <input class="form-check-input" type="radio" name="accessType" id="closed" value="closed" th:checked="${channel.accessType.name() == 'closed'}">
+                    <label class="form-check-label text-dark" for="closed">Private</label>
+                  </div>
+                </div>
+                <button class="btn btn-primary float-end" type="submit">Update channel information</button>         
+              </form>
+            </div>
+          </div>
+          <div th:if="${permissions==3}">
+            <button id="deleteChannel" class="btn btn-danger float-end" type="submit">Delete channel</button>
+          </div>
+        </div>
+        <!-- Main section end -->
+        <!-- Right sidebar -->
+        <div class="col-md-2 d-flex flex-column h-100 p-0 bg-dark text-light">
+          <div class="list-group pb-3 overflow-scroll">
+            <div class="h-100 overflow-scroll">
+              <!-- Admins -->
+              <button class="btn btn-lg btn-dark w-100 text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAdmins" aria-expanded="false" aria-controls="collapseAdmins">Admins</button>
+              <div class="collapse overflow-scroll" id="collapseAdmins">
+                <div class="list-group pb-3 overflow-scroll">
+                  <div class="row px-0 mx-0" th:each="admin: ${admins}">
+                    <div class="col-2 ps-2 pe-0 py-2">
+                      <img class="border border-light img-fluid rounded-circle profilePicTiny" th:src="${admin.profilePic}?@{/image/{imageId}/(imageId=${admin.profilePic.id})}:@{/default/profilePic.png}" alt="profile pictire">
+                    </div>
+                    <div class="col-10 px-0 py-1">
+                      <button class="btn btn-dark w-100" data-bs-toggle="modal" data-bs-target="#manageUser" th:id="${admin.username}" th:text="${admin.username}"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Admins end -->
+              <!-- Moderators -->
+              <button class="btn btn-lg btn-dark w-100 text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapseModerators" aria-expanded="false" aria-controls="collapseModerators">Moderators</button>
+              <div class="collapse overflow-scroll" id="collapseModerators">
+                <div class="list-group pb-3 overflow-scroll">
+                  <div class="row px-0 mx-0" th:each="moderator: ${moderators}">
+                    <div class="col-2 ps-2 pe-0 py-2">
+                      <img class="border border-light img-fluid rounded-circle profilePicTiny" th:src="${moderator.profilePic}?@{/image/{imageId}/(imageId=${moderator.profilePic.id})}:@{/default/profilePic.png}" alt="profile pictire">
+                    </div>
+                    <div class="col-10 px-0 py-1">
+                      <button class="btn btn-dark w-100" data-bs-toggle="modal" data-bs-target="#manageUser" th:id="${moderator.username}" th:text="${moderator.username}"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Moderators end -->
+              <!-- Users -->
+              <button class="btn btn-lg btn-dark w-100 text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">Users</button>
+              <div class="collapse overflow-scroll" id="collapseUsers">
+                <div class="list-group pb-3 overflow-scroll">
+                  <div class="row px-0 mx-0" th:each="user: ${users}">
+                    <div class="col-2 ps-2 pe-0 py-2">
+                      <img class="border border-light img-fluid rounded-circle profilePicTiny" th:src="${user.profilePic}?@{/image/{imageId}/(imageId=${user.profilePic.id})}:@{/default/profilePic.png}" alt="profile pictire">
+                    </div>
+                    <div class="col-10 px-0 py-1">
+                      <button class="btn btn-dark w-100" data-bs-toggle="modal" data-bs-target="#manageUser" th:id="${user.username}" th:text="${user.username}"></button>
+                    </div>
+                  </div>
+                </div>            
+              </div>
+              <!-- Users end -->
+              <!-- ManageUser modal -->
+              <div class="modal fade" id="manageUser" tabindex="-1" aria-labelledby="manageUserTitle" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title text-dark" id="manageUserTitle">Manage member</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                      <button class="btn btn-success w-25 float-start" id="promoteUser">Promote</button>  
+                      <button class="btn btn-secondary w-25" id="demoteUser">Demote</button>
+                      <button class="btn btn-danger w-25 float-end" id="removeUser">Remove</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- ManageUser modal end -->
+            </div>          
+          </div>
+        </div>
+        <!-- Right sidebar end -->
+      </div>
+    </div>
+  </body>
+</html>

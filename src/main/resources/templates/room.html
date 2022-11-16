@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+      <title th:text="${channel.name}"></title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <link rel="stylesheet" href="/css/bootstrap.css" th:href="@{/css/bootstrap.css}" />
+      <link rel="stylesheet" href="/css/main.css" th:href="@{/css/main.css}" />
+      <script src="/js/room.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    </head>
+  <body class="bg-image">
+    <div class="visually-hidden" th:id="channelId" th:value="${channel.id}"></div>
+    <div class="visually-hidden" th:id="roomId" th:value="${room.id}"></div>
+    <div class="container-fluid h-100">
+      <div class="row h-100">
+        <!-- Rooms section -->
+        <div class="col-md-2 d-flex flex-column h-100 p-0 bg-dark text-light">
+          <a class="btn btn-lg btn-dark text-start" href="/dashboard/0">Dashboard</a>
+          <a class="btn btn-lg btn-dark text-start" th:href="@{/channel/{channelId}/0(channelId=${channel.id})}">News</a>
+          <button class="btn btn-lg btn-dark text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRooms" aria-expanded="false" aria-controls="collapseRooms">Rooms</button>
+          <div class="collapse overflow-scroll" id="collapseRooms">
+              <div class="pb-3 overflow-scroll">
+                  <div class="h-100 overflow-scroll">
+                      <div class="px-0 mx-0" th:each="room: ${rooms}" >
+                          <div class="px-0 py-2">
+                            <a class="btn btn-dark w-100" th:href="@{/channel/{channelId}/room/{roomName}/0(channelId=${channel.id}, roomName=${room.name})}" th:text="${room.name}"></a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="mt-auto text-center" th:if="${permissions>=2}">
+                <button type="button" class="btn btn-outline-info btn-md mb-2" data-bs-toggle="modal" data-bs-target="#createRoomModal">Create new room</button>
+              </div>
+          </div>
+          <!-- Create room modal -->
+          <div class="modal fade" id="createRoomModal" tabindex="-1" aria-labelledby="createRoomModalTitle" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title text-dark" id="createRoomModalTitle">New Room</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="createRoom" method="post">
+                  <div class="modal-body">
+                    <div class="form-light text-center">
+                      <label for="name" class="visually-hidden"></label>
+                      <input class="form-control mb-1" type="text" name="name" placeholder="name" maxlength="80" required>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="submit">Create</button> 
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <!-- Create room modal end -->
+          <a class="btn btn-lg btn-dark text-start" th:if="${permissions>=2}" th:href="@{/channel/{channelId}/settings(channelId=${channel.id})}">Settings</a>
+          <div class="mt-auto" th:if="${permissions!=-1 and permissions!=3}">
+            <form id="leaveChannel">
+              <div class="form-light px-1 text-center">
+                <button class="btn btn-outline-info btn-md mb-2" type="submit">Leave</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- Messaging section -->
+        <div class="col-md-10 h-100 d-flex flex-column overflow-scroll">
+          <!-- Messages list -->
+          <div class="row">
+            <div class="col-2 offset-1">
+              <a th:if="${#lists.size(messages)==30}" class="btn btn-dark border border-primary w-100 my-3 float-end" th:href="@{/channel/{channelId}/room/{roomName}/{page}(channelId=${channel.id}, roomName=${room.name}, page=${page+1})}">Previous</a>
+            </div>
+            <div class="col-2 offset-2">
+              <a th:if="${page>0}" class="btn btn-dark border border-primary w-100 my-3" th:href="@{/channel/{channelId}/room/{roomName}/{page}(channelId=${channel.id}, roomName=${room.name}, page=0)}">To latest</a>
+            </div>
+            <div class="col-2 offset-2">
+              <a th:if="${page>0}" class="btn btn-dark border border-primary w-100 my-3 float-start" th:href="@{/channel/{channelId}/room/{roomName}/{page}(channelId=${channel.id}, roomName=${room.name}, page=${page-1})}">Next</a>
+            </div>
+          </div>
+          <div class="d-flex flex-column-reverse pt-2">
+            <div class="card mb-3 w-75" th:each="message: ${messages}" th:class="${user.username == message.username}?'card mb-3 w-75 ms-auto text-dark bg-secondary bg-opacity-75':'card mb-3 w-75 text-dark bg-info bg-opacity-75'">
+              <div class="card-header">
+                <div class="row">
+                  <div class="col-6 d-flex">
+                    <img class="border border-light img-fluid rounded-circle profilePicTiny" th:src="${message.userProfilePic}?@{/image/{imageId}/(imageId=${message.userProfilePic})}:@{/default/profilePic.png}" alt="profile pictire">
+                    <p class="mb-0 ps-2" th:text="${message.username}"></p>
+                  </div>
+                  <p class="col-2 offset-3 mb-0" th:text="${#temporals.format(message.timestamp, 'dd MMM HH:mm')}"></p>
+                  <div class="col-1 py-0">
+                    <button th:if="${permissions>=1}" type="button" th:id="${message.id}" class="btn btn-danger py-1 text-center removeMessage"><img src="/css/remove.svg" class="addButton"></button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <p class="card-text" th:text="${message.text}"></p>
+                <a class="link-primary" th:if="${message.attachmentId}" th:text="${message.attachmentFilename}" th:href="@{/file/{id}/(id=${message.attachmentId})}"></a>
+              </div>
+            </div>
+          </div>
+          <!-- Send message form -->
+          <form class="mt-auto mb-2 ps-5 pe-4 w-100 text-center row" id="sendMessage" method="post">
+            <div class="col-10 p-0">
+              <textarea class="form-control border border-2 border-dark text-dark" id="messageInput" type="text" name="text" rows="2" maxlength="2000" placeholder="Type message..." required></textarea>
+            </div>
+            <div class="col-1 p-0 h-100">
+              <button type="button" class="btn btn-secondary border border-2 border-dark h-100 w-100"><label for="file">Attach file</label></button>
+              <input class="form-control visually-hidden" type="file" name="file" id="file">
+            </div>
+            <div class="col-1 p-0">
+              <button class="btn btn-primary border border-2 border-dark h-100 w-100" type="submit">Send</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

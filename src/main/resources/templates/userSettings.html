@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+      <title th:text="${user.username}"></title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <link rel="stylesheet" href="/css/bootstrap.css" th:href="@{/css/bootstrap.css}" />
+      <link rel="stylesheet" href="/css/main.css" th:href="@{/css/main.css}" />
+      <script src="/js/userSettings.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  </head>
+  <body class="bg-image">
+    <div class="container-fluid h-100">
+      <div class="row h-100">
+        <!-- Sidebar navigation -->
+        <div class="col-md-2 d-flex flex-column h-100 p-0 bg-dark text-light">
+          <a class="btn btn-lg btn-dark text-start" href="/dashboard/0">Dashboard</a>
+        </div>
+        <!-- Main section -->
+        <div class="col-md-10 ps-4 py-3">
+          <h2>Edit profile</h2>
+          <div class="row">
+            <div class="col-3 ps-3 text-center">
+              <img class="border border-light img-fluid rounded-circle profilePicLarge" th:src="${user.profilePic}?@{/image/{imageId}/(imageId=${user.profilePic.id})}:@{/default/profilePic.png}" alt="profile pictire">
+              <form id="updateProfilePic" method="patch" enctype="multipart/form-data">
+                <label for="image" class="form-label ps-1 text-dark">Update profile picture</label>
+                <input class="form-control mb-2" type="file" name="image" accept="image/png, image/jpg, image/jpeg" required>
+                <button class="btn btn-primary w-100" type="submit">Update</button> 
+              </form>
+            </div>
+            <div class="col-9 ps-3 text-center">
+              <form id="updatePassword" method="patch">
+                <h5 class="float-start">Update password</h5>
+                <div class="form-light mb-4">
+                  <label for="password" class="visually-hidden">Password</label>
+                  <input type="password" name="password" class="form-control form-control-md" placeholder="Password" required/>
+                </div>
+                <div class="form-light mb-4">
+                  <label for="newPassword" class="visually-hidden">New password</label>
+                  <input type="password" name="newPassword" class="form-control form-control-md" placeholder="New password" required/>
+                </div>
+                <div class="form-light mb-4">
+                  <label for="matchingPassword" class="visually-hidden">Confirm new password</label>
+                  <input type="password" name="matchingPassword" class="form-control form-control-md" placeholder="Confirm password" required/>
+                </div>
+                <button class="btn btn-primary float-end" type="submit">Update</button> 
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>

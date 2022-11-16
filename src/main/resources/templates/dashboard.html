@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+      <title>Dashboard</title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <link rel="stylesheet" href="/css/bootstrap.css" th:href="@{/css/bootstrap.css}" />
+      <link rel="stylesheet" href="/css/main.css" th:href="@{/css/main.css}" />
+      <script src="/js/dashboard.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  </head>
+  <body class="bg-image">
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <!-- Channels section -->
+            <div class="col-md-3 d-flex flex-column h-100 p-0 bg-dark text-light">
+                <a class="btn btn-lg btn-dark text-start" href="/dashboard/0">Dashboard</a>
+                <a class="btn btn-lg btn-dark text-start" href="/dashboard/0">News</a>
+                <a class="btn btn-lg btn-dark text-start" href="/user/settings">My profile</a>
+                <button class="btn btn-lg btn-dark text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapseChannels" aria-expanded="false" aria-controls="collapseChannels">Channels</button>
+                <div class="collapse overflow-scroll" id="collapseChannels">
+                    <div class="pb-3 overflow-scroll">
+                        <div class="h-100 overflow-scroll">
+                            <div class="row px-0 mx-0" th:each="channel: ${channels}">
+                                <div class="col-2 ps-2 pe-0 py-1">
+                                    <img class="border border-light img-fluid rounded-circle profilePicSmall" th:src="@{/image/{imageId}/(imageId=${channel.profilePic.id})}" alt="profile pictire">
+                                </div>
+                                <div class="col-10 px-0 py-2">
+                                    <a class="btn btn-dark w-100" th:href="@{/channel/{channelId}/0(channelId=${channel.id})}" th:text="${channel.name}"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-auto text-center">
+                        <button type="button" class="btn btn-outline-info btn-md mb-2" data-bs-toggle="modal" data-bs-target="#createChannelModal">Create new channel</button>
+                    </div>
+                </div>
+                <a class="btn btn-lg btn-dark text-start" href="/auth/logout">Logout</a>
+                
+                <!-- Create channel modal window -->
+                <div class="modal fade" id="createChannelModal" tabindex="-1" aria-labelledby="createChannelModalTitle" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title text-dark" id="createChannelModalTitle">Create Channel</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="createChannel" method="post" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <div class="form-light text-center">
+                                    <label for="name" class="visually-hidden"></label>
+                                    <input class="form-control mb-1" type="text" name="name" placeholder="name" maxlength="80" required>
+                                </div>
+                                <div class="form-light text-center">
+                                    <label for="description" class="visually-hidden"></label>
+                                    <textarea class="form-control mb-1" type="text" name="description" rows="3" maxlength="150" placeholder="description"></textarea>
+                                </div>
+                                <div class="row ps-3 py-2">
+                                    <div class="col-3 form-check">
+                                        <input class="form-check-input" type="radio" name="accessType" id="open" value="open" checked>
+                                        <label class="form-check-label text-dark" for="open">Public</label>
+                                    </div>
+                                    <div class="col-3 form-check">
+                                        <input class="form-check-input" type="radio" name="accessType" id="closed" value="closed">
+                                        <label class="form-check-label text-dark" for="closed">Private</label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="image" class="form-label text-dark">Select picture for your channel(.png)</label>
+                                    <input class="form-control" type="file" name="image" accept="image/png, image/jpg, image/jpeg">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-primary" type="submit">Create channel</button> 
+                            </div>
+                        </form>
+                      </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- Main section -->
+            <div class="col-md-7 h-100 overflow-scroll">
+
+                <h4 class="text-center">Public channels</h4>
+                <!-- Search -->
+                <form id="search">
+                    <div class="row p-0 m-0 form-light text-center">
+                        <div class="col-10 ps-4">
+                            <label for="search" class="visually-hidden"></label>
+                            <input class="form-control mb-1" type="text" name="search" placeholder="Search for public channel" required>
+                        </div>
+                        <div class="col-2 pe-3">
+                            <button class="btn btn-info btn-md mb-2" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>    
+                <!-- Public Channels -->
+                <div class="card bg-secondary bg-opacity-75 text-dark mb-2 mx-4" th:each="channel: ${openChannels}">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-1">
+                                <img class="card-img-top border border-primary profilePic" th:src="@{/image/{imageId}/(imageId=${channel.profilePic.id})}" alt="profile pictire">
+                            </div>
+                            <h5 class="col-11 px-4 card-title" th:text="${channel.name}"></h5>
+                        </div>
+                        <p class="card-text" th:text="${channel.description}"></p> 
+                        <a class="btn btn-primary float-end" th:href="@{/channel/{channelId}/0(channelId=${channel.id})}">Visit</a>
+                    </div>
+                </div>
+                <!-- Channels pagination -->
+                <div class="row">
+                    <div class="col-2 offset-1">
+                    <a th:if="${page>0}" class="btn btn-dark border border-primary w-100 my-3 float-start" th:href="@{/dashboard/{page}(page=${page-1})}">Previous</a>
+                    </div>
+                    <div class="col-2 offset-2">
+                    <a th:if="${page>0}" class="btn btn-dark border border-primary w-100 my-3" th:href="@{/dashboard/{page}(page=0)}">To start</a>
+                    </div>
+                    <div class="col-2 offset-2">
+                    <a th:if="${#lists.size(openChannels)==15}" class="btn btn-dark border border-primary w-100 my-3 float-end" th:href="@{/dashboard/{page}(page=${page+1})}">Next</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Friends section -->
+            <div class="col-md-2 d-flex flex-column h-100 p-0 bg-dark text-light">
+
+                <button class="btn btn-lg btn-dark text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFriends" aria-expanded="false" aria-controls="collapseFriends">Friends</button>
+                <div class="collapse overflow-scroll" id="collapseFriends">
+                    <div class="list-group pb-3 overflow-scroll">
+                        <div class="row px-0 mx-0" th:each="friend: ${friends}">
+                            <div class="col-2 ps-2 pe-0 py-2">
+                                <img class="border border-light img-fluid rounded-circle profilePicTiny" th:src="${friend.profilePic}?@{/image/{imageId}/(imageId=${friend.profilePic.id})}:@{/default/profilePic.png}" alt="profile pictire">
+                            </div>
+                            <div class="col-10 px-0 py-1">
+                                <a class="btn btn-dark w-100" th:text="${friend.username}"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-lg btn-dark text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFriendRequests" aria-expanded="false" aria-controls="collapseFriendRequests">Friend requests</button>
+                <div class="collapse overflow-scroll" id="collapseFriendRequests">
+                    <div class="list-group pb-3 overflow-scroll">
+                        <div class="overflow-scroll">
+                            <div class="row p-0 m-0" th:each="friendRequest: ${friendshipRequests}">
+                                <div class="col-2 ps-2 pe-0 py-2">
+                                    <img class="border border-light img-fluid rounded-circle profilePicTiny" th:src="${friendRequest.profilePic}?@{/image/{imageId}/(imageId=${friendRequest.profilePic.id})}:@{/default/profilePic.png}" alt="profile pictire">
+                                </div>
+                                <div class="col-8 px-0 py-1">
+                                    <li class="btn btn-dark w-100" th:text="${friendRequest.username}"></li>
+                                </div>
+                                <div class="col-2 px-0 py-1">
+                                    <button type="button" th:id="${friendRequest.username}" class="btn btn-dark px-2 text-center acceptFriend"><img src="/css/add.svg" class="addButton"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-auto">
+                    <form id="sendFriendRequest">
+                        <div class="form-light px-1 text-center">
+                            <label for="username" class="visually-hidden"></label>
+                            <input class="form-control mb-1" type="text" name="username" placeholder="username" maxlength="80" required>
+                            <button class="btn btn-outline-info btn-md mb-2" type="submit">Add friend</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
