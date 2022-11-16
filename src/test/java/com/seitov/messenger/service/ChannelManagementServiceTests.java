@@ -24,8 +24,6 @@ import com.seitov.messenger.entity.Membership.Role;
 import com.seitov.messenger.exception.NotAuthorizedException;
 import com.seitov.messenger.repository.ArticleRepository;
 
-import net.bytebuddy.asm.Advice.Local;
-
 @ExtendWith(MockitoExtension.class)
 public class ChannelManagementServiceTests {
     
