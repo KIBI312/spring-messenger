@@ -1,0 +1,48 @@
+.bg-image{
+    background-color: #F7F9F8;
+    background-image: url("flat-mountains.svg");
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+.profilePic{
+    height: 64px;
+    width: 64px;
+}
+
+.profilePicLarge{
+    height: 200px;
+    width: 200px;
+}
+
+.profilePicSmall{
+    height: 48px;
+    width: 48px;
+}
+
+.profilePicTiny{
+    height: 32px;
+    width: 32px;
+}
+
+.removeButton{
+    height: 21px;
+    width: 21px;
+}
+
+.addButton{
+    height: 21px;
+    width: 21px;
+}
+
+textarea#messageInput{ 
+    background-color:rgba(177, 189, 211, 0.85);
+}
+
+html,body {
+    height: 100%;
+}
+
+.overflow-scroll::-webkit-scrollbar {
+  display: none;
+}
