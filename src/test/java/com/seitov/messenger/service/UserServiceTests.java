@@ -83,7 +83,7 @@ public class UserServiceTests {
         user.setUsername("user");
         user.setPassword(passwordEncoder.encode("pass"));
         updatePasswordDto.setMatchingPassword("newPass");
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.saveAndFlush(user)).thenReturn(user);
         assertEquals(user, userService.updatePassword(user, updatePasswordDto));
     }
 
@@ -121,14 +121,14 @@ public class UserServiceTests {
         User user = new User();
         user.setUsername("username");
         user.setPassword("password");
-        when(userRepository.save(null)).thenThrow(IllegalArgumentException.class);
-        when(userRepository.save(illegalUser)).thenThrow(DataIntegrityViolationException.class);
+        when(userRepository.saveAndFlush(null)).thenThrow(IllegalArgumentException.class);
+        when(userRepository.saveAndFlush(illegalUser)).thenThrow(DataIntegrityViolationException.class);
         Exception ex;
         ex = assertThrows(IllegalDataFormatException.class, () -> userService.update(null));
         assertEquals("User for update must not be null!", ex.getMessage());
         ex = assertThrows(IllegalDataFormatException.class, () -> userService.update(illegalUser));
         assertEquals("Illegal User entity received!", ex.getMessage());
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.saveAndFlush(user)).thenReturn(user);
         assertEquals(user, userService.update(user));
     }
 

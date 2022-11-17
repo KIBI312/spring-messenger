@@ -22,7 +22,7 @@ public class AttachmentService {
 
     public Attachment create(Attachment attachment) throws IllegalDataFormatException {
         try {
-            return attachmentRepository.save(attachment);
+            return attachmentRepository.saveAndFlush(attachment);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalDataFormatException("Attachment's filename must not be empty!", e.getCause());
         }

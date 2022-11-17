@@ -51,7 +51,7 @@ public class UserService {
 
     public User update(User user) throws IllegalDataFormatException, IllegalDataException {
         try {
-            return userRepository.save(user);
+            return userRepository.saveAndFlush(user);
         } catch (IllegalArgumentException e) {
             throw new IllegalDataFormatException("User for update must not be null!", e.getCause());
         } catch (DataIntegrityViolationException e) {
@@ -68,7 +68,7 @@ public class UserService {
         }
         user.setPassword(passwordEncoder.encode(updatePasswordDto.getNewPassword()));
         try {
-            return userRepository.save(user);   
+            return userRepository.saveAndFlush(user);   
         } catch (DataIntegrityViolationException e) {
             throw new IllegalDataFormatException("Illegal User entity received!", e.getCause());
         }

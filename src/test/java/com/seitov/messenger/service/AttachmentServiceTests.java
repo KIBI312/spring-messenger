@@ -48,7 +48,7 @@ public class AttachmentServiceTests {
     public void createWithEmptyFilename() {
         Attachment attachment = new Attachment();
         attachment.setFilename("");
-        when(attachmentRepository.save(attachment)).thenThrow(DataIntegrityViolationException.class);
+        when(attachmentRepository.saveAndFlush(attachment)).thenThrow(DataIntegrityViolationException.class);
         Exception ex = assertThrows(IllegalDataFormatException.class, () -> attachmentService.create(attachment));
         assertEquals("Attachment's filename must not be empty!", ex.getMessage());
     }
@@ -57,7 +57,7 @@ public class AttachmentServiceTests {
     public void createWithValidFilename() {
         Attachment attachment = new Attachment();
         attachment.setFilename("filename.pdf");
-        when(attachmentRepository.save(attachment)).thenReturn(attachment);
+        when(attachmentRepository.saveAndFlush(attachment)).thenReturn(attachment);
         assertEquals(attachmentService.create(attachment), attachment);
     }
 

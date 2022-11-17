@@ -36,7 +36,7 @@ public class FriendshipService {
             friendship.setUser(pair.get(user));
             friendship.setFriend(pair.get(friend));
             friendship.setStatus(Status.pending);
-            friendshipRepository.save(friendship);   
+            friendshipRepository.saveAndFlush(friendship);   
             return friendship;
         } catch (DataIntegrityViolationException e) {
             throw new IllegalDataException("Request to this user already sent!");
