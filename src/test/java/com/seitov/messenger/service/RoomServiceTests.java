@@ -65,7 +65,7 @@ public class RoomServiceTests {
         message.setRoom(room);
         User user = new User(UUID.randomUUID(), "user", "pass", null, "USER");
         when(membershipService.checkPermissions(openChannel, user, 0)).thenReturn(0);
-        when(messageRepository.save(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(messageRepository.saveAndFlush(any(Message.class))).thenAnswer(i -> i.getArguments()[0]);
         Message savedMessage = roomService.newMessage(user, message);
         message.setTimestamp(LocalDateTime.now());
         assertEquals(message, savedMessage);

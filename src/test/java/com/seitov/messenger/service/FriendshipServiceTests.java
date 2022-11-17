@@ -53,7 +53,7 @@ public class FriendshipServiceTests {
         User friend = new User();
         mockUserServiceGetPair(user, friend);
         Friendship friendship = new Friendship(null, user, friend, Status.pending);
-        when(friendshipRepository.save(friendship)).thenThrow(DataIntegrityViolationException.class);
+        when(friendshipRepository.saveAndFlush(friendship)).thenThrow(DataIntegrityViolationException.class);
         when(userService.getUserPair("user", "friend"))
                 .thenReturn(Map.of(user.getUsername(), user, friend.getUsername(), friend));
         Exception ex = assertThrows(IllegalDataException.class,

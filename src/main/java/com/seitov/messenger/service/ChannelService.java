@@ -32,7 +32,7 @@ public class ChannelService {
 
     public Channel create(Channel toCreate) throws IllegalDataFormatException {
         try {
-            return channelRepository.save(toCreate);
+            return channelRepository.saveAndFlush(toCreate);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalDataFormatException("Name and accessType cannot be null!");
         }
@@ -48,7 +48,7 @@ public class ChannelService {
 
     public Channel update(Channel channel) throws IllegalDataFormatException {
         try {
-            return channelRepository.save(channel);   
+            return channelRepository.saveAndFlush(channel);   
         } catch (DataIntegrityViolationException e) {
             throw new IllegalDataFormatException("Error occured while attempting to update this channel!", e.getCause());
         }

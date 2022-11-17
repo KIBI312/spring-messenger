@@ -38,7 +38,7 @@ public class RoomService {
 
     public Room create(Room room) throws IllegalDataFormatException {
         try {
-            return roomRepository.save(room);
+            return roomRepository.saveAndFlush(room);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalDataFormatException("Error occured while attempting to create new room!", e.getCause());
         }
@@ -62,7 +62,7 @@ public class RoomService {
         message.setTimestamp(LocalDateTime.now());
         message.setUser(user);
         try { 
-            return messageRepository.save(message);   
+            return messageRepository.saveAndFlush(message);   
         } catch (DataIntegrityViolationException e) {
             throw new IllegalDataFormatException("Error occured while attempting to save new message!", e.getCause());
         }

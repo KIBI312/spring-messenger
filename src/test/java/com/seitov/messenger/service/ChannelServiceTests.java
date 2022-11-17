@@ -40,14 +40,14 @@ public class ChannelServiceTests {
     @Test
     public void createChannel() {
         Channel channel = new Channel(UUID.randomUUID(), "Channel", null, null, AccessType.closed);
-        when(channelRepository.save(channel)).thenReturn(channel);
+        when(channelRepository.saveAndFlush(channel)).thenReturn(channel);
         assertEquals(channel, channelService.create(channel));
     }
 
     @Test
     public void createChannelWithNullRequiredFields() {
         Channel channel = new Channel(null, "Channel", new Image(), "description", null);
-        when(channelRepository.save(channel)).thenThrow(DataIntegrityViolationException.class);
+        when(channelRepository.saveAndFlush(channel)).thenThrow(DataIntegrityViolationException.class);
         Exception ex = assertThrows(IllegalDataFormatException.class, () -> channelService.create(channel));
         assertEquals("Name and accessType cannot be null!", ex.getMessage());
     }

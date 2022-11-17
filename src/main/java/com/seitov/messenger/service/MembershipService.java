@@ -36,7 +36,7 @@ public class MembershipService {
             membership.setChannel(channel);
             membership.setUser(user);
             membership.setRole(role);
-            membershipRepository.save(membership);
+            membershipRepository.saveAndFlush(membership);
             return membership;
         } catch (DataIntegrityViolationException e){
             throw new ResourceAlreadyExistsException("User already exist on this server!", e.getCause());
