@@ -6,6 +6,7 @@ import java.security.Principal;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,7 +31,7 @@ public class UserOperationsController {
     }
 
     @PatchMapping(path = "/update/profilePic", consumes = "multipart/form-data")
-    public String updateUserProfilePicture(Principal principal, @RequestParam("image") MultipartFile image ) {
+    public ResponseEntity<String> updateUserProfilePicture(Principal principal, @RequestParam("image") MultipartFile image ) {
         User user = userService.getUser(principal.getName());
         Image img = new Image();
         try {
@@ -40,14 +41,14 @@ public class UserOperationsController {
         }
         user.setProfilePic(img);
         userService.update(user);
-        return "Success";
+        return ResponseEntity.ok("Your profile picture was updated!");
     }
 
     @PatchMapping(path = "/update/password", consumes = "multipart/form-data")
-    public String updateUserPassword(Principal principal, @Valid UpdatePasswordDto updatePasswordDto ) {
+    public ResponseEntity<String> updateUserPassword(Principal principal, @Valid UpdatePasswordDto updatePasswordDto ) {
         User user = userService.getUser(principal.getName());
         userService.updatePassword(user, updatePasswordDto);
-        return "Success";
+        return ResponseEntity.ok("Your password was updated!");
     }
 
 }

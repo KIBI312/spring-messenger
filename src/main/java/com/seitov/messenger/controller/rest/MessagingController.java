@@ -16,6 +16,7 @@ import java.security.Principal;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +37,7 @@ public class MessagingController {
     }
 
     @PostMapping(value="/create", consumes = "multipart/form-data")
-    public String newMessage(Principal principal, Message message, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> newMessage(Principal principal, Message message, @RequestParam("file") MultipartFile file) {
         User user = authService.getUser(principal);
         if(!file.isEmpty()){
             Attachment attachment = new Attachment();
@@ -49,16 +50,15 @@ public class MessagingController {
             message.setAttachment(attachment);
         }
         roomService.newMessage(user, message);
-        return "success";
+        return ResponseEntity.created(null).body("New message sent!");
     }
     
     @DeleteMapping(value="/remove")
-    public String deleteMessage(Principal principal, @RequestBody String messageId) {
+    public ResponseEntity<String> deleteMessage(Principal principal, @RequestBody String messageId) {
         User user = authService.getUser(principal);
         Message message = roomService.getMessage(UUID.fromString(messageId));
         roomService.deleteMessage(user, message);
-        return "success";
+        return ResponseEntity.ok("Message was deleted!");
     }
-
 
 }

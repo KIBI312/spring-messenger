@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,7 +51,7 @@ public class ChannelOperationsController {
     }
 
     @PostMapping(path = "/create", consumes = "multipart/form-data")
-    public String createChannel(Principal principal, Channel channel, @RequestParam("image") MultipartFile image) {
+    public ResponseEntity<String> createChannel(Principal principal, Channel channel, @RequestParam("image") MultipartFile image) {
         User user = authService.getUser(principal);
         if(!image.isEmpty()) {
             Image img = new Image();
@@ -64,19 +65,19 @@ public class ChannelOperationsController {
             throw new IllegalDataFormatException("Channel profile picture cannot be null!");
         }
         channelManagementService.createChannel(channel, user);
-        return "success";
+        return ResponseEntity.created(null).body("Channel was created!");
     }
 
     @DeleteMapping(path = "/delete")
-    public String deleteChannel(Principal principal, @RequestBody String channelId) {
+    public ResponseEntity<String> deleteChannel(Principal principal, @RequestBody String channelId) {
         User user = authService.getUser(principal);
         Channel channel = channelService.get(UUID.fromString(channelId));
         channelManagementService.deleteChannel(channel, user);
-        return "success";
+        return ResponseEntity.ok("Channel was deleted!");
     }
 
     @PatchMapping(path = "/update/profilePic", consumes = "multipart/form-data")
-    public String updateChannelProfilePicture(Principal principal, @RequestParam("channelId") UUID channelId, @RequestParam("image") MultipartFile image) {
+    public ResponseEntity<String> updateChannelProfilePicture(Principal principal, @RequestParam("channelId") UUID channelId, @RequestParam("image") MultipartFile image) {
         User user = authService.getUser(principal);
         Channel channel = channelService.get(channelId);
         if(!image.isEmpty()) {
@@ -91,72 +92,72 @@ public class ChannelOperationsController {
             throw new IllegalDataFormatException("Channel profile picture cannot be null!");
         }
         channelManagementService.update(channel, user);
-        return "success";
+        return ResponseEntity.ok("Channel's profile picture was updated!");
     }
 
     @PatchMapping(path = "/update/details")
-    public String updateChannelDetails(Principal principal, Channel channel) {
+    public ResponseEntity<String> updateChannelDetails(Principal principal, Channel channel) {
         User user = authService.getUser(principal);
         channelManagementService.updateDetails(channel, user);
-        return "success";
+        return ResponseEntity.ok("Channel's details was updated!");
     }
 
     @PutMapping(path = "/add/member", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String addMember(Principal principal, @RequestBody MemberDto memberDto) {
+    public ResponseEntity<String> addMember(Principal principal, @RequestBody MemberDto memberDto) {
         User user = authService.getUser(principal);
         Channel channel = channelService.get(memberDto.getChannelId());
         channelManagementService.addUserToChannel(channel, user, memberDto.getUsername());   
-        return "success";
+        return ResponseEntity.created(null).body("New member was added!");
     }
 
     @DeleteMapping(path = "/remove/member", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String removeMember(Principal principal, @RequestBody MemberDto memberDto) {
+    public ResponseEntity<String> removeMember(Principal principal, @RequestBody MemberDto memberDto) {
         User user = authService.getUser(principal);
         Channel channel = channelService.get(memberDto.getChannelId());
         channelManagementService.removeUserFromChannel(channel, user, memberDto.getUsername());
-        return "success";
+        return ResponseEntity.ok("Memeber was removed!");
     }
 
     @PatchMapping(path = "/promote/member", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String promoteMember(Principal principal, @RequestBody MemberDto memberDto) {
+    public ResponseEntity<String> promoteMember(Principal principal, @RequestBody MemberDto memberDto) {
         User user = authService.getUser(principal);
         Channel channel = channelService.get(memberDto.getChannelId());
         channelManagementService.promoteUserOnChannel(channel, user, memberDto.getUsername());
-        return "success";
+        return  ResponseEntity.ok("Member was promoted!");
     }
 
     @PatchMapping(path = "/demote/member", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String demoteMember(Principal principal, @RequestBody MemberDto memberDto) {        
+    public ResponseEntity<String> demoteMember(Principal principal, @RequestBody MemberDto memberDto) {        
         User user = authService.getUser(principal);
         Channel channel = channelService.get(memberDto.getChannelId());
         channelManagementService.demoteUserOnChannel(channel, user, memberDto.getUsername());
-        return "success";
+        return  ResponseEntity.ok("Member was demoted!");
     }
 
     @PutMapping(path = "/join")
-    public String joinChannel(Principal principal, @RequestBody String channelId) {
+    public ResponseEntity<String> joinChannel(Principal principal, @RequestBody String channelId) {
         Channel channel = channelService.get(UUID.fromString(channelId));
         User user = authService.getUser(principal);
         if(channel.getAccessType()==AccessType.closed) {
             throw new NotAuthorizedException("Cannot join to private channel");
         }
         membershipService.create(channel, user, Role.user);
-        return "success";
+        return ResponseEntity.created(null).body("You joined this channel!");
     }
 
     @DeleteMapping(path = "/leave")
-    public String leaveChannel(Principal principal, @RequestBody String channelId) {
+    public ResponseEntity<String> leaveChannel(Principal principal, @RequestBody String channelId) {
         Channel channel = channelService.get(UUID.fromString(channelId));
         User user = authService.getUser(principal);
         if(membershipService.getPermissions(channel, user)==3) {
             throw new NotAuthorizedException("Founder cannot leave channel, only delete it!");
         }
         membershipService.delete(channel, user);
-        return "success";
+        return ResponseEntity.ok("You left this channel!");
     }
 
     @PostMapping(path = "/article/create", consumes = "multipart/form-data")
-    public String newArticle(Principal principal, Article article, @RequestParam("image") MultipartFile image) {
+    public ResponseEntity<String> newArticle(Principal principal, Article article, @RequestParam("image") MultipartFile image) {
         User user = authService.getUser(principal);
         if(!image.isEmpty()) {
             Image img = new Image();
@@ -168,14 +169,14 @@ public class ChannelOperationsController {
             article.setArticleImage(img);
         }
         channelManagementService.newArticle(user, article);
-        return "success";
+        return ResponseEntity.created(null).body("New article was created!");
     }
 
     @PostMapping(path = "/room/create")
-    public String newRoom(Principal principal, Room room) {
+    public ResponseEntity<String> newRoom(Principal principal, Room room) {
         User user = authService.getUser(principal);
         channelManagementService.newRoom(user, room);
-        return "success";
+        return ResponseEntity.created(null).body("New room was created!");
     }
 
 
