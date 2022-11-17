@@ -40,7 +40,7 @@ public class MembershipServiceTests {
         Channel channel = new Channel(UUID.randomUUID(), "channel", null, null, AccessType.open);
         User user = new User(UUID.randomUUID(), "user", "pass", null, "USER");
         Membership membership = new Membership(user, channel, Role.founder);
-        when(membershipRepository.save(any(Membership.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(membershipRepository.saveAndFlush(any(Membership.class))).thenAnswer(i -> i.getArguments()[0]);
         Membership created = membershipService.create(channel, user, Role.founder);
         assertEquals(membership.getUser(), created.getUser());
         assertEquals(membership.getChannel(), created.getChannel());
@@ -51,7 +51,7 @@ public class MembershipServiceTests {
     public void createDuplicate() {
         Channel channel = new Channel(UUID.randomUUID(), "channel", null, null, AccessType.open);
         User user = new User(UUID.randomUUID(), "user", "pass", null, "USER");
-        when(membershipRepository.save(any(Membership.class))).thenThrow(DataIntegrityViolationException.class);
+        when(membershipRepository.saveAndFlush(any(Membership.class))).thenThrow(DataIntegrityViolationException.class);
         Exception ex = assertThrows(ResourceAlreadyExistsException.class, () -> membershipService.create(channel, user, Role.user));
         assertEquals("User already exist on this server!", ex.getMessage());
     }
