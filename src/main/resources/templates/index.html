@@ -3,9 +3,23 @@
   <head>
       <title>Main</title>
       <meta charset="utf-8" />
+      <link rel="stylesheet" href="/css/bootstrap.css" th:href="@{/css/bootstrap.css}" />
       <link rel="stylesheet" href="/css/main.css" th:href="@{/css/main.css}" />
   </head>
-  <body>
-    <h1>WELCOME</h1>
+  <body class="bg-image">
+    <div class="container-fluid h-100">
+      <div class="row h-100">
+        <div class="col-md-10 offset-1 h-100">
+          <div class="bg-dark text-light mt-5 p-4 rounded-3">
+            <h1 class="pb-2">Imagine a place...</h1>
+            <p>...where you can belong to a school club, a gaming group, or a worldwide art community. Where just you and a handful of friends can spend time together. A place that makes it easy to talk every day and hang out more often.</p>  
+          </div>
+          <div class="mt-3 text-end">
+            <a href="/auth/login" class="btn btn-secondary btn-lg me-3 px-5">Login</a  >
+            <a href="/auth/register" class="btn btn-primary btn-lg px-5">Sign Up</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
