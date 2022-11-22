@@ -16,5 +16,6 @@ public interface ChannelRepository extends JpaRepository<Channel, UUID> {
 
     Optional<Channel> findById(UUID id);
     List<Channel> findAllByAccessType(AccessType accessType, Pageable pageable);
+    List<Channel> findAllByAccessTypeAndNameContainingIgnoreCase(AccessType accessType, String name, Pageable pageable);
 
 }

@@ -25,7 +25,8 @@
                         <div class="h-100 overflow-scroll">
                             <div class="row px-0 mx-0" th:each="channel: ${channels}">
                                 <div class="col-2 ps-2 pe-0 py-1">
-                                    <img class="border border-light img-fluid rounded-circle profilePicSmall" th:src="@{/image/{imageId}/(imageId=${channel.profilePic.id})}" alt="profile pictire">
+                                                                                                    
+                                    <img class="border border-light img-fluid rounded-circle profilePicSmall" th:src="${channel.profilePic}?@{/image/{imageId}/(imageId=${channel.profilePic.id})}:@{/default/profilePic.png}" alt="profile pictire">
                                 </div>
                                 <div class="col-10 px-0 py-2">
                                     <a class="btn btn-dark w-100" th:href="@{/channel/{channelId}/0(channelId=${channel.id})}" th:text="${channel.name}"></a>
@@ -103,7 +104,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-1">
-                                <img class="card-img-top border border-primary profilePic" th:src="@{/image/{imageId}/(imageId=${channel.profilePic.id})}" alt="profile pictire">
+                                <img class="card-img-top border border-primary profilePic" th:src="${channel.profilePic}?@{/image/{imageId}/(imageId=${channel.profilePic.id})}:@{/default/profilePic.png}" alt="profile pictire">
                             </div>
                             <h5 class="col-11 px-4 card-title" th:text="${channel.name}"></h5>
                         </div>
@@ -114,13 +115,13 @@
                 <!-- Channels pagination -->
                 <div class="row">
                     <div class="col-2 offset-1">
-                    <a th:if="${page>0}" class="btn btn-dark border border-primary w-100 my-3 float-start" th:href="@{/dashboard/{page}(page=${page-1})}">Previous</a>
+                    <a th:if="${page>0}" class="btn btn-dark border border-primary w-100 my-3 float-start" th:href="${search}?@{/dashboard/{page}?search={search}(page=${page-1},search=${search})}:@{/dashboard/{page}(page=${page-1})}">Previous</a>
                     </div>
                     <div class="col-2 offset-2">
-                    <a th:if="${page>0}" class="btn btn-dark border border-primary w-100 my-3" th:href="@{/dashboard/{page}(page=0)}">To start</a>
+                    <a th:if="${page>0}" class="btn btn-dark border border-primary w-100 my-3" th:href="${search}?@{/dashboard/{page}?search={search}(page=0,search=${search})}:@{/dashboard/{page}(page=0)}">To start</a>
                     </div>
                     <div class="col-2 offset-2">
-                    <a th:if="${#lists.size(openChannels)==15}" class="btn btn-dark border border-primary w-100 my-3 float-end" th:href="@{/dashboard/{page}(page=${page+1})}">Next</a>
+                    <a th:if="${#lists.size(openChannels)==15}" class="btn btn-dark border border-primary w-100 my-3 float-end" th:href="${search}?@{/dashboard/{page}?search={search}(page=${page+1},search=${search})}:@{/dashboard/{page}(page=${page+1})}">Next</a>
                     </div>
                 </div>
             </div>

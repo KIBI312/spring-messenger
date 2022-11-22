@@ -67,4 +67,9 @@ public class ChannelService {
         return articleRepository.findAllByChannelOrderByTimestampDesc(channel, pageable);
     }
 
+    public List<Channel> searchOpenChannels(String search, Pageable pageable) {
+        List<Channel> channels = channelRepository.findAllByAccessTypeAndNameContainingIgnoreCase(AccessType.open, search, pageable);
+        return Collections.unmodifiableList(channels);
+    }
+
 }

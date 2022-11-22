@@ -179,6 +179,4 @@ public class ChannelOperationsController {
         return ResponseEntity.created(null).body("New room was created!");
     }
 
-
-
 }
