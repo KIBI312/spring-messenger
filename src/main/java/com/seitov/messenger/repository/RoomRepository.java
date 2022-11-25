@@ -15,5 +15,6 @@ public interface RoomRepository extends JpaRepository<Room, UUID> {
     
     Set<Room> findAllByChannel(Channel channel);
     Optional<Room> findByNameAndChannel(String name, Channel channel);
+    long deleteAllByChannel(Channel channel);
 
 }

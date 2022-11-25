@@ -47,6 +47,8 @@ public class ChannelManagementService {
     public void deleteChannel(Channel channel, User user) {
         membershipService.checkPermissions(channel, user, 3);
         membershipService.deleteAllByChannel(channel);
+        articleRepository.deleteAllByChannel(channel);
+        roomService.deleteAllByChannel(channel);
         channelService.delete(channel.getId());
     }
 

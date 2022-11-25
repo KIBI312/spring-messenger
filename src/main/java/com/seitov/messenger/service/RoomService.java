@@ -85,4 +85,12 @@ public class RoomService {
         return messageRepository.findAllByRoomOrderByTimestampDesc(room, pageable);
     }
 
+    public void deleteAllByChannel(Channel channel) {
+        Set<Room> rooms = getChannelRooms(channel);
+        rooms.forEach(room -> {
+            messageRepository.deleteAllByRoom(room);
+        });
+        roomRepository.deleteAllByChannel(channel);
+    }
+
 }

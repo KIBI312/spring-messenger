@@ -22,7 +22,7 @@ public interface MessageRepository extends JpaRepository<Message, UUID>{
     "LEFT JOIN a.attachment c " +
     "WHERE a.room = :room ORDER BY timestamp DESC")
     List<MessageDto> findAllByRoomOrderByTimestampDesc(@Param("room") Room room, Pageable pageable);
-
+    long deleteAllByRoom(Room room);
 }
 
 

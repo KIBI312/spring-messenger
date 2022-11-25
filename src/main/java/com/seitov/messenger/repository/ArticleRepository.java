@@ -14,5 +14,5 @@ import com.seitov.messenger.entity.Channel;
 public interface ArticleRepository extends JpaRepository<Article, UUID> {
 
     List<Article> findAllByChannelOrderByTimestampDesc(Channel channel, Pageable pageable);
-
+    long deleteAllByChannel(Channel channel);
 }

@@ -33,7 +33,7 @@ public class DashboardController {
     private MembershipService membershipService;
     private ChannelService channelService;
     private AuthService authService;
-    
+
     @Autowired
     public DashboardController(FriendshipService friendshipService, MembershipService membershipService, ChannelService channelService, AuthService authService){
         this.friendshipService = friendshipService;
@@ -72,6 +72,4 @@ public class DashboardController {
         return "dashboard";
     }
 
-
-    
 }
